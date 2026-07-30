@@ -5,4 +5,4 @@ Disallow: /cart.html
 Disallow: /checkout.html
 Disallow: /order-success.html
 
-Sitemap: https://www.techforge.example.in/sitemap.xml
+Sitemap: https://tech-forge-blue.vercel.app/sitemap.xml
