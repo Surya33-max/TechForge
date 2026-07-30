@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us | TechForge India</title>
+<meta name="description" content="Get in touch with TechForge India for order support, bulk pricing or partnership queries.">
+<link rel="canonical" href="https://www.techforge.example.in/contact.html">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header glass">
+  <div class="container nav-row">
+    <a href="index.html" class="flex items-center gap-2"><span class="neu-sm" style="padding:.5rem;display:inline-flex">🖥️</span><span class="logo">TECH<span>FORGE</span></span></a>
+    <nav class="flex items-center gap-3"><a href="store.html" class="neu-btn">Shop</a></nav>
+  </div>
+</header>
+
+<main class="container py-8" style="max-width:640px">
+  <div class="breadcrumb"><a href="index.html">Home</a> / <span>Contact</span></div>
+  <h1 class="font-black mb-6" style="font-size:2rem">Contact Us</h1>
+  <div class="neu-card" style="padding:2.5rem">
+    <p class="text-muted mb-6">Have a question about an order, a product, or a partnership? Send us a message — messages submitted here are stored locally for this demo.</p>
+    <form id="contactForm" onsubmit="submitContact(event)" style="display:flex;flex-direction:column;gap:1rem">
+      <input name="name" placeholder="Your Name" required class="neu-in">
+      <input name="email" type="email" placeholder="Email Address" required class="neu-in">
+      <input name="subject" placeholder="Subject" required class="neu-in">
+      <textarea name="message" placeholder="Your message..." required rows="5" class="neu-in"></textarea>
+      <button class="neu-btn primary" style="padding:1rem">Send Message</button>
+    </form>
+  </div>
+  <div class="cat-grid mt-6" style="grid-template-columns:repeat(3,1fr)">
+    <div class="neu-sm text-center" style="padding:1.25rem">📧<div class="text-sm font-bold mt-2">support@techforge.in</div></div>
+    <div class="neu-sm text-center" style="padding:1.25rem">📞<div class="text-sm font-bold mt-2">+91 99999 99999</div></div>
+    <div class="neu-sm text-center" style="padding:1.25rem">📍<div class="text-sm font-bold mt-2">Chennai, India</div></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container text-center text-muted">&copy; 2026 TechForge India. All rights reserved.</div>
+</footer>
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  function submitContact(e){
+    e.preventDefault();
+    const f = e.target;
+    const msgs = lsGet('tf_contact_messages', []);
+    msgs.unshift({ name:f.name.value, email:f.email.value, subject:f.subject.value, message:f.message.value, ts:Date.now() });
+    lsSet('tf_contact_messages', msgs);
+    logEvent('contact_form_submit', { subject: f.subject.value });
+    f.reset();
+    showToast("Message sent — we'll get back to you soon!");
+  }
+</script>
+</body>
+</html>

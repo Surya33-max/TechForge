@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merchant Admin | TechForge India</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header glass">
+  <div class="container nav-row">
+    <a href="index.html" class="flex items-center gap-2"><span class="neu-sm" style="padding:.5rem;display:inline-flex">🖥️</span><span class="logo">TECH<span>FORGE</span> <span class="text-muted" style="font-size:.7rem;font-weight:700">ADMIN</span></span></a>
+    <a href="index.html" class="neu-btn">Exit to Store</a>
+  </div>
+</header>
+
+<main class="container py-8" id="adminRoot"></main>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  const root = document.getElementById('adminRoot');
+  let activeTab = 'overview';
+
+  function loginScreen(){
+    root.innerHTML = `
+    <div style="min-height:60vh;display:flex;align-items:center;justify-content:center">
+      <div class="glass-modal text-center" style="padding:2.5rem;max-width:24rem;width:100%">
+        <div style="font-size:2.5rem">🛡️</div>
+        <h2 class="font-black mt-2" style="font-size:1.4rem">Merchant Center</h2>
+        <p class="text-muted text-sm mt-2 mb-6">Enter the admin password to manage products, orders and analytics.</p>
+        <input id="pwdInput" type="password" placeholder="Password (hint: admin123)" class="neu-in text-center mb-4" onkeyup="if(event.key==='Enter')tryLogin()">
+        <button class="neu-btn primary block" onclick="tryLogin()">Login</button>
+      </div>
+    </div>`;
+  }
+  function tryLogin(){
+    const v = document.getElementById('pwdInput').value;
+    if(v==='admin123'){ setAdminAuthed(true); renderDashboard(); }
+    else showToast('Invalid password', 'error');
+  }
+
+  function renderDashboard(){
+    const analytics = getAnalytics();
+    let revenue=0, orders=getOrders().length, views=0, addToCartN=0, purchases=0;
+    analytics.forEach(a=>{
+      if(a.type==='purchase'){ revenue += a.value||0; purchases++; }
+      if(a.type==='page_view') views++;
+      if(a.type==='add_to_cart') addToCartN++;
+    });
+
+    root.innerHTML = `
+    <div class="section-title">
+      <h2>Merchant Dashboard</h2>
+      <button class="neu-btn" onclick="setAdminAuthed(false);loginScreen()">Log Out</button>
+    </div>
+    <div class="tab-row">
+      <button class="tab-btn ${activeTab==='overview'?'active':''}" onclick="setTab('overview')">📊 Overview</button>
+      <button class="tab-btn ${activeTab==='products'?'active':''}" onclick="setTab('products')">📦 Products</button>
+      <button class="tab-btn ${activeTab==='orders'?'active':''}" onclick="setTab('orders')">🧾 Orders</button>
+      <button class="tab-btn ${activeTab==='leads'?'active':''}" onclick="setTab('leads')">📧 Leads</button>
+    </div>
+    <div id="tabContent"></div>`;
+
+    if(activeTab==='overview') renderOverview(revenue, orders, views, addToCartN, purchases);
+    if(activeTab==='products') renderProducts();
+    if(activeTab==='orders') renderOrders();
+    if(activeTab==='leads') renderLeads();
+  }
+  function setTab(t){ activeTab = t; renderDashboard(); }
+
+  function renderOverview(revenue, orders, views, addToCartN, purchases){
+    const conversionRate = views>0 ? ((purchases/views)*100).toFixed(1) : '0.0';
+    document.getElementById('tabContent').innerHTML = `
+      <div class="cat-grid" style="grid-template-columns:repeat(2,1fr)">
+        <div class="neu-card stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value text-success">${fmtINR(revenue)}</div></div>
+        <div class="neu-card stat-card"><div class="stat-label">Total Orders</div><div class="stat-value text-indigo">${orders}</div></div>
+        <div class="neu-card stat-card"><div class="stat-label">Page Views</div><div class="stat-value">${views}</div></div>
+        <div class="neu-card stat-card"><div class="stat-label">Add-to-Cart Events</div><div class="stat-value">${addToCartN}</div></div>
+      </div>
+      <div class="neu-card mt-6" style="padding:1.5rem">
+        <h3 class="font-black mb-4">Marketing Funnel</h3>
+        <div style="display:flex;flex-direction:column;gap:.75rem">
+          <div class="flex justify-between text-sm font-bold"><span>Page Views</span><span>${views}</span></div>
+          <div class="flex justify-between text-sm font-bold"><span>Add to Cart</span><span>${addToCartN}</span></div>
+          <div class="flex justify-between text-sm font-bold"><span>Purchases</span><span>${purchases}</span></div>
+          <div class="flex justify-between text-sm font-bold text-indigo"><span>Conversion Rate (views → purchase)</span><span>${conversionRate}%</span></div>
+        </div>
+        <p class="text-muted text-xs mt-4">This funnel is powered by the same <code>logEvent()</code> calls that would feed GA4 / GTM in production. Open DevTools → Console → type <code>dataLayer</code> to inspect raw events.</p>
+      </div>
+      <div class="neu-card mt-6" style="padding:1.5rem">
+        <div class="flex justify-between items-center mb-4"><h3 class="font-black">Recent Events</h3><button class="neu-btn" onclick="clearAnalytics();renderDashboard()">Clear Log</button></div>
+        <div style="max-height:16rem;overflow-y:auto;font-size:.8rem" class="font-bold text-muted">
+          ${getAnalytics().slice(-30).reverse().map(e=>`<div class="flex justify-between" style="border-bottom:1px solid rgba(148,163,184,.2);padding:.4rem 0"><span>${e.type}</span><span>${timeAgo(e.ts)}</span></div>`).join('') || '<div>No events yet.</div>'}
+        </div>
+      </div>`;
+  }
+
+  function renderProducts(){
+    const products = getProducts();
+    document.getElementById('tabContent').innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:2rem" class="admin-flex">
+        <div class="neu-card" style="flex:2;padding:1.5rem;overflow-x:auto">
+          <h3 class="font-black mb-4">Inventory (${products.length} products)</h3>
+          <table class="admin-table">
+            <thead><tr><th>Product</th><th>Price</th><th>Stock</th><th>Action</th></tr></thead>
+            <tbody>
+              ${products.map(p=>`
+                <tr>
+                  <td class="flex items-center gap-2"><img src="${p.img}"><span class="line-clamp-2" style="max-width:180px">${p.title}</span></td>
+                  <td>${fmtINR(p.price)}</td>
+                  <td class="${p.stock>0?'text-success':'text-danger'}">${p.stock}</td>
+                  <td>
+                    <button class="neu-btn text-indigo" style="padding:.4rem .7rem" onclick="editProduct('${p.id}')">Edit</button>
+                    <button class="neu-btn danger-text" style="padding:.4rem .7rem" onclick="deleteProduct('${p.id}')">Delete</button>
+                  </td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="neu-card" style="flex:1;padding:1.5rem;height:max-content">
+          <h3 class="font-black mb-4" id="formTitle">Add New Product</h3>
+          <form onsubmit="saveProductForm(event)" style="display:flex;flex-direction:column;gap:.9rem">
+            <input type="hidden" id="f-id">
+            <input id="f-title" placeholder="Title" required class="neu-in">
+            <select id="f-cat" class="neu-in"><option>Components</option><option>Laptops</option><option>Monitors</option><option>Accessories</option></select>
+            <input id="f-brand" placeholder="Brand" required class="neu-in">
+            <input id="f-price" type="number" placeholder="Price (₹)" required class="neu-in">
+            <input id="f-mrp" type="number" placeholder="MRP (₹, optional)" class="neu-in">
+            <input id="f-img" type="url" placeholder="Image URL" required class="neu-in">
+            <input id="f-stock" type="number" placeholder="Stock" required value="10" class="neu-in">
+            <textarea id="f-desc" placeholder="Description" required rows="3" class="neu-in"></textarea>
+            <button type="submit" class="neu-btn primary">Save Product</button>
+            <button type="button" class="neu-btn" onclick="resetForm()">Cancel / Clear</button>
+          </form>
+        </div>
+      </div>
+      <style>@media(min-width:900px){.admin-flex{flex-direction:row !important}}</style>`;
+  }
+  function resetForm(){
+    ['f-id','f-title','f-brand','f-price','f-mrp','f-img','f-desc'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-stock').value='10';
+    document.getElementById('formTitle').textContent='Add New Product';
+  }
+  function editProduct(id){
+    const p = getProductById(id); if(!p) return;
+    document.getElementById('f-id').value=p.id;
+    document.getElementById('f-title').value=p.title;
+    document.getElementById('f-cat').value=p.category;
+    document.getElementById('f-brand').value=p.brand;
+    document.getElementById('f-price').value=p.price;
+    document.getElementById('f-mrp').value=p.mrp||'';
+    document.getElementById('f-img').value=p.img;
+    document.getElementById('f-stock').value=p.stock;
+    document.getElementById('f-desc').value=p.desc;
+    document.getElementById('formTitle').textContent='Edit Product';
+    window.scrollTo(0,0);
+  }
+  function saveProductForm(e){
+    e.preventDefault();
+    const id = document.getElementById('f-id').value || 'TF-'+Date.now().toString().slice(-6);
+    const products = getProducts();
+    const idx = products.findIndex(p=>p.id===id);
+    const data = {
+      id, title:document.getElementById('f-title').value, category:document.getElementById('f-cat').value,
+      brand:document.getElementById('f-brand').value, price:Number(document.getElementById('f-price').value),
+      mrp:Number(document.getElementById('f-mrp').value)||null, img:document.getElementById('f-img').value,
+      stock:Number(document.getElementById('f-stock').value), desc:document.getElementById('f-desc').value,
+      rating: idx>-1?products[idx].rating:5.0, reviews: idx>-1?products[idx].reviews:0,
+      badge: idx>-1?products[idx].badge:'', specs: idx>-1?products[idx].specs:['Quality assured','TechForge verified']
+    };
+    if(idx>-1) products[idx]={...products[idx], ...data}; else products.push(data);
+    saveProducts(products);
+    showToast('Product saved');
+    renderProducts();
+  }
+  function deleteProduct(id){
+    if(!confirm('Delete this product?')) return;
+    saveProducts(getProducts().filter(p=>p.id!==id));
+    renderProducts();
+  }
+
+  function renderOrders(){
+    const orders = getOrders();
+    document.getElementById('tabContent').innerHTML = `
+      <div class="neu-card" style="padding:1.5rem;overflow-x:auto">
+        <h3 class="font-black mb-4">Orders (${orders.length})</h3>
+        ${orders.length===0?'<div class="empty-state">No orders yet.</div>':`
+        <table class="admin-table">
+          <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Placed</th></tr></thead>
+          <tbody>
+            ${orders.map(o=>`<tr><td>${o.id}</td><td>${o.customer.name}<br><span class="text-xs text-muted">${o.customer.city}</span></td><td>${o.items.length}</td><td class="font-black">${fmtINR(o.total)}</td><td>${o.method.toUpperCase()}</td><td>${timeAgo(o.ts)}</td></tr>`).join('')}
+          </tbody>
+        </table>`}
+      </div>`;
+  }
+
+  function renderLeads(){
+    const leads = getLeads();
+    document.getElementById('tabContent').innerHTML = `
+      <div class="neu-card" style="padding:1.5rem">
+        <h3 class="font-black mb-4">Newsletter Subscribers (${leads.length})</h3>
+        ${leads.length===0?'<div class="empty-state">No subscribers yet — try the newsletter form on the home page.</div>':`
+        <table class="admin-table">
+          <thead><tr><th>Email</th><th>Subscribed</th></tr></thead>
+          <tbody>${leads.map(l=>`<tr><td>${l.email}</td><td>${timeAgo(l.ts)}</td></tr>`).join('')}</tbody>
+        </table>`}
+        <p class="text-muted text-xs mt-4">In production, export this list to Mailchimp / Brevo for drip-campaign practice.</p>
+      </div>`;
+  }
+
+  isAdminAuthed() ? renderDashboard() : loginScreen();
+</script>
+</body>
+</html>

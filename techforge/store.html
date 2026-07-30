@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop All Products | TechForge India</title>
+<meta name="description" content="Browse gaming PC components, laptops, monitors and accessories at TechForge India. Filter by category, price and rating.">
+<link rel="canonical" href="https://www.techforge.example.in/store.html">
+<link rel="stylesheet" href="css/style.css">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"BreadcrumbList",
+  "itemListElement":[
+    {"@type":"ListItem","position":1,"name":"Home","item":"https://www.techforge.example.in/index.html"},
+    {"@type":"ListItem","position":2,"name":"Store","item":"https://www.techforge.example.in/store.html"}
+  ]
+}
+</script>
+</head>
+<body>
+
+<div class="marquee-strip"><div class="marquee-track">
+  <span>🔥 FESTIVE SALE: Use code <b>TECH10</b> for extra 10% off</span>
+  <span>🚚 Free delivery pan-India on orders above ₹2,999</span>
+  <span>💳 No-cost EMI available on all cards</span>
+  <span>🛡️ 7-day easy replacement + brand warranty</span>
+  <span>🔥 FESTIVE SALE: Use code <b>TECH10</b> for extra 10% off</span>
+  <span>🚚 Free delivery pan-India on orders above ₹2,999</span>
+  <span>💳 No-cost EMI available on all cards</span>
+  <span>🛡️ 7-day easy replacement + brand warranty</span>
+</div></div>
+<header class="site-header glass">
+  <div class="container nav-row">
+    <div class="flex items-center gap-3">
+      <button class="neu-btn menu-toggle" onclick="toggleMobileMenu()" aria-label="Menu">☰</button>
+      <a href="index.html" class="flex items-center gap-2"><span class="neu-sm" style="padding:.5rem;display:inline-flex">🖥️</span><span class="logo">TECH<span>FORGE</span></span></a>
+    </div>
+    <form class="search-form" onsubmit="event.preventDefault();doSiteSearch(this.q)">
+      <input class="neu-in" name="q" id="searchDesktop" type="text" placeholder="Search processors, GPUs, laptops...">
+      <button type="submit" aria-label="Search">🔍</button>
+    </form>
+    <nav class="flex items-center gap-3">
+      <a href="wishlist.html" class="neu-btn" title="Wishlist">❤️</a>
+      <a href="admin.html" class="neu-btn text-indigo">🛡️ Admin</a>
+      <button class="neu-btn cart-btn" onclick="toggleCartDrawer(true)" aria-label="Cart">🛒<span class="cart-count hidden" data-cart-count>0</span></button>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <input class="neu-in" placeholder="Search..." onkeyup="if(event.key==='Enter')doSiteSearch(this)">
+    <a href="store.html" class="neu-btn block">All Products</a>
+    <a href="store.html?cat=Components" class="neu-btn block">Components</a>
+    <a href="store.html?cat=Laptops" class="neu-btn block">Laptops</a>
+    <a href="blog.html" class="neu-btn block">Blog</a>
+    <a href="admin.html" class="neu-btn block text-indigo">Admin Login</a>
+  </div>
+</header>
+
+<main class="container py-8">
+  <div class="breadcrumb"><a href="index.html">Home</a> / <span id="crumbCat">Store</span></div>
+  <div class="store-layout">
+    <aside class="store-sidebar">
+      <div class="neu-card" style="padding:1.5rem">
+        <h3 class="font-black mb-4" style="border-bottom:1px solid rgba(148,163,184,.3);padding-bottom:.5rem">Categories</h3>
+        <div id="catFilters" class="flex" style="flex-direction:column;gap:.25rem"></div>
+      </div>
+      <div class="neu-card mt-6" style="padding:1.5rem">
+        <h3 class="font-black mb-4" style="border-bottom:1px solid rgba(148,163,184,.3);padding-bottom:.5rem">Sort By</h3>
+        <select id="sortSelect" class="neu-in" onchange="renderStore()">
+          <option value="relevance">Relevance</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating">Highest Rated</option>
+        </select>
+      </div>
+      <div class="neu-card mt-6 text-center" style="padding:1.5rem;cursor:pointer" onclick="location.href='store.html?cat=Components'">
+        <span class="badge badge-indigo mb-2" style="display:inline-block">Sponsored</span>
+        <h4 class="font-black">RTX 40-Series Deals</h4>
+        <p class="text-muted text-sm mt-2">Free game bundle on select GPUs.</p>
+      </div>
+    </aside>
+    <div style="flex:1">
+      <div class="section-title">
+        <h2 id="storeTitle">All Products</h2>
+        <span id="resultCount" class="text-muted text-sm"></span>
+      </div>
+      <div class="product-grid" id="storeGrid"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><div class="logo mb-2">TECH<span>FORGE</span></div><p class="text-muted">India's trusted destination for gaming PCs, components, laptops and monitors.</p></div>
+    <div><h4>Shop</h4><ul><li><a href="store.html?cat=Components">Components</a></li><li><a href="store.html?cat=Laptops">Laptops</a></li><li><a href="store.html?cat=Monitors">Monitors</a></li><li><a href="store.html?cat=Accessories">Accessories</a></li></ul></div>
+    <div><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li><li><a href="admin.html">Merchant Admin</a></li></ul></div>
+    <div><h4>Follow Us</h4><div class="social-row"><a href="#">📷</a><a href="#">📘</a><a href="#">▶️</a></div><p class="text-muted mt-4">support@techforge.in<br>+91 99999 99999</p></div>
+  </div>
+  <div class="container text-center text-muted mt-8">&copy; 2026 TechForge India. All rights reserved.</div>
+</footer>
+<a href="https://wa.me/919999999999" target="_blank" rel="noopener" class="wa-float">💬</a>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  let activeCat = qs('cat') || 'all';
+  let activeQuery = qs('q') || '';
+
+  function productCard(p){
+    const off = p.mrp ? Math.round(100-(p.price/p.mrp*100)) : 0;
+    return `
+    <a class="neu-card p-card" href="product.html?id=${p.id}">
+      ${p.badge?`<span class="badge ${p.badge==='Low Stock'?'badge-red':p.badge==='Sale'?'badge-amber':'badge-indigo'}">${p.badge}</span>`:''}
+      <button class="wish-btn ${isWishlisted(p.id)?'active':''}" onclick="event.preventDefault();toggleWishlist('${p.id}');renderStore()">${isWishlisted(p.id)?'❤️':'🤍'}</button>
+      <img src="${p.img}" alt="${p.title}" loading="lazy">
+      <h3 class="line-clamp-2">${p.title}</h3>
+      <div class="stars text-xs mb-2">${starString(p.rating)} <span class="text-muted">(${p.reviews})</span></div>
+      <div class="mb-4"><span class="p-price">${fmtINR(p.price)}</span>${p.mrp?`<span class="p-mrp">${fmtINR(p.mrp)}</span><span class="p-off">${off}% off</span>`:''}</div>
+      <button class="neu-btn primary block" onclick="event.preventDefault();addToCart('${p.id}')">${p.stock<1?'Notify Me':'Add to Cart'}</button>
+    </a>`;
+  }
+
+  function renderCatFilters(){
+    const cats = ['all','Components','Laptops','Monitors','Accessories'];
+    document.getElementById('catFilters').innerHTML = cats.map(c=>`
+      <button class="filter-btn ${activeCat===c?'active':''}" onclick="setCat('${c}')">${c==='all'?'All Products':c}</button>`).join('');
+  }
+  function setCat(c){
+    activeCat = c;
+    const url = new URL(location.href); url.searchParams.set('cat', c); history.replaceState(null,'',url);
+    document.getElementById('storeTitle').textContent = c==='all' ? 'All Products' : c;
+    document.getElementById('crumbCat').textContent = c==='all' ? 'Store' : c;
+    renderCatFilters(); renderStore();
+  }
+
+  function renderStore(){
+    let list = getProducts().filter(p=>{
+      const matchCat = activeCat==='all' || p.category===activeCat;
+      const matchQ = !activeQuery || p.title.toLowerCase().includes(activeQuery.toLowerCase()) || p.desc.toLowerCase().includes(activeQuery.toLowerCase()) || p.brand.toLowerCase().includes(activeQuery.toLowerCase());
+      return matchCat && matchQ;
+    });
+    const sort = document.getElementById('sortSelect').value;
+    if(sort==='price-asc') list.sort((a,b)=>a.price-b.price);
+    if(sort==='price-desc') list.sort((a,b)=>b.price-a.price);
+    if(sort==='rating') list.sort((a,b)=>b.rating-a.rating);
+    document.getElementById('resultCount').textContent = list.length + ' items';
+    document.getElementById('storeGrid').innerHTML = list.length ? list.map(productCard).join('') : '<div class="empty-state" style="grid-column:1/-1">No products match your search. Try a different keyword or category.</div>';
+    logEvent('view_item_list', { category: activeCat, query: activeQuery, results: list.length });
+  }
+
+  document.getElementById('searchDesktop').value = activeQuery;
+  document.getElementById('storeTitle').textContent = activeCat==='all' ? 'All Products' : activeCat;
+  document.getElementById('crumbCat').textContent = activeCat==='all' ? 'Store' : activeCat;
+  renderCatFilters();
+  renderStore();
+</script>
+</body>
+</html>
