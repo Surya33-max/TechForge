@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Confirmed | TechForge India</title>
+<meta name="robots" content="noindex,follow">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="site-header glass">
+  <div class="container nav-row">
+    <a href="index.html" class="flex items-center gap-2"><span class="neu-sm" style="padding:.5rem;display:inline-flex">🖥️</span><span class="logo">TECH<span>FORGE</span></span></a>
+    <a href="store.html" class="neu-btn">Continue Shopping</a>
+  </div>
+</header>
+
+<main class="container py-16" style="max-width:640px">
+  <div class="neu-card text-center" style="padding:3rem" id="successRoot">Loading order…</div>
+</main>
+
+<footer class="site-footer">
+  <div class="container text-center text-muted">&copy; 2026 TechForge India. All rights reserved.</div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  const order = getOrderById(qs('order'));
+  const root = document.getElementById('successRoot');
+  if(!order){
+    root.innerHTML = `<div>We couldn't find that order. <a href="store.html" class="text-indigo font-bold">Return to store →</a></div>`;
+  } else {
+    root.innerHTML = `
+      <div style="font-size:3rem">🎉</div>
+      <h1 class="font-black mt-4" style="font-size:1.6rem">Order Placed Successfully!</h1>
+      <p class="text-muted mt-2">Order ID <b>${order.id}</b> · ${order.status}</p>
+      <div class="neu-sm mt-6 text-left" style="padding:1.5rem">
+        ${order.items.map(i=>`<div class="flex justify-between text-sm mb-2"><span>${i.title} × ${i.qty}</span><span class="font-bold">${fmtINR(i.price*i.qty)}</span></div>`).join('')}
+        <div class="summary-total mt-2"><span>Total Paid</span><span>${fmtINR(order.total)}</span></div>
+      </div>
+      <p class="text-muted text-sm mt-6">A confirmation has been "sent" to ${order.customer.email}. Estimated delivery: 3-5 business days to ${order.customer.city}.</p>
+      <a href="store.html" class="neu-btn primary block mt-6" style="padding:1rem">Continue Shopping</a>
+    `;
+  }
+</script>
+</body>
+</html>

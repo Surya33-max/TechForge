@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Wishlist | TechForge India</title>
+<meta name="robots" content="noindex,follow">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header glass">
+  <div class="container nav-row">
+    <a href="index.html" class="flex items-center gap-2"><span class="neu-sm" style="padding:.5rem;display:inline-flex">🖥️</span><span class="logo">TECH<span>FORGE</span></span></a>
+    <nav class="flex items-center gap-3">
+      <a href="store.html" class="neu-btn">Shop</a>
+      <button class="neu-btn cart-btn" onclick="toggleCartDrawer(true)">🛒<span class="cart-count hidden" data-cart-count>0</span></button>
+    </nav>
+  </div>
+</header>
+
+<main class="container py-8">
+  <h1 class="font-black mb-8" style="font-size:1.9rem">My Wishlist</h1>
+  <div class="product-grid" id="wishGrid"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="container text-center text-muted">&copy; 2026 TechForge India. All rights reserved.</div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  function render(){
+    const ids = getWishlist();
+    const items = getProducts().filter(p=>ids.includes(p.id));
+    const grid = document.getElementById('wishGrid');
+    if(items.length===0){ grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">Your wishlist is empty. <a href="store.html" class="text-indigo font-bold">Browse products →</a></div>`; return; }
+    grid.innerHTML = items.map(p=>`
+      <div class="neu-card p-card">
+        <button class="wish-btn active" onclick="toggleWishlist('${p.id}');render()">❤️</button>
+        <a href="product.html?id=${p.id}"><img src="${p.img}" alt="${p.title}"><h3 class="line-clamp-2">${p.title}</h3></a>
+        <div class="p-price mb-4">${fmtINR(p.price)}</div>
+        <button class="neu-btn primary block" onclick="addToCart('${p.id}')">Add to Cart</button>
+      </div>`).join('');
+  }
+  render();
+</script>
+</body>
+</html>

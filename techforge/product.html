@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Product | TechForge India</title>
+<meta id="metaDesc" name="description" content="Shop premium PC hardware at TechForge India.">
+<link id="canonicalLink" rel="canonical" href="https://www.techforge.example.in/product.html">
+<link rel="stylesheet" href="css/style.css">
+<script id="productJsonLd" type="application/ld+json">{}</script>
+</head>
+<body>
+
+<div class="marquee-strip"><div class="marquee-track">
+  <span>🔥 FESTIVE SALE: Use code <b>TECH10</b> for extra 10% off</span>
+  <span>🚚 Free delivery pan-India on orders above ₹2,999</span>
+  <span>💳 No-cost EMI available on all cards</span>
+  <span>🛡️ 7-day easy replacement + brand warranty</span>
+  <span>🔥 FESTIVE SALE: Use code <b>TECH10</b> for extra 10% off</span>
+  <span>🚚 Free delivery pan-India on orders above ₹2,999</span>
+</div></div>
+<header class="site-header glass">
+  <div class="container nav-row">
+    <div class="flex items-center gap-3">
+      <button class="neu-btn menu-toggle" onclick="toggleMobileMenu()" aria-label="Menu">☰</button>
+      <a href="index.html" class="flex items-center gap-2"><span class="neu-sm" style="padding:.5rem;display:inline-flex">🖥️</span><span class="logo">TECH<span>FORGE</span></span></a>
+    </div>
+    <form class="search-form" onsubmit="event.preventDefault();doSiteSearch(this.q)"><input class="neu-in" name="q" type="text" placeholder="Search..."><button type="submit">🔍</button></form>
+    <nav class="flex items-center gap-3">
+      <a href="wishlist.html" class="neu-btn">❤️</a>
+      <a href="admin.html" class="neu-btn text-indigo">🛡️ Admin</a>
+      <button class="neu-btn cart-btn" onclick="toggleCartDrawer(true)">🛒<span class="cart-count hidden" data-cart-count>0</span></button>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <input class="neu-in" placeholder="Search..." onkeyup="if(event.key==='Enter')doSiteSearch(this)">
+    <a href="store.html" class="neu-btn block">All Products</a>
+    <a href="blog.html" class="neu-btn block">Blog</a>
+    <a href="admin.html" class="neu-btn block text-indigo">Admin Login</a>
+  </div>
+</header>
+
+<main class="container py-8" id="pdpRoot">
+  <div class="breadcrumb" id="crumb"><a href="index.html">Home</a> / <a href="store.html">Store</a> / <span>Loading…</span></div>
+  <div id="pdpContent" class="empty-state">Loading product…</div>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div><div class="logo mb-2">TECH<span>FORGE</span></div><p class="text-muted">India's trusted destination for gaming PCs, components, laptops and monitors.</p></div>
+    <div><h4>Shop</h4><ul><li><a href="store.html?cat=Components">Components</a></li><li><a href="store.html?cat=Laptops">Laptops</a></li><li><a href="store.html?cat=Monitors">Monitors</a></li></ul></div>
+    <div><h4>Company</h4><ul><li><a href="about.html">About Us</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div><h4>Follow Us</h4><div class="social-row"><a href="#">📷</a><a href="#">📘</a><a href="#">▶️</a></div></div>
+  </div>
+  <div class="container text-center text-muted mt-8">&copy; 2026 TechForge India. All rights reserved.</div>
+</footer>
+<a href="https://wa.me/919999999999" target="_blank" rel="noopener" class="wa-float">💬</a>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  const pid = qs('id');
+  const p = getProductById(pid);
+
+  function renderRelated(){
+    const related = getProducts().filter(x=>x.category===p.category && x.id!==p.id).slice(0,4);
+    return related.map(r=>`
+      <a class="neu-card p-card" href="product.html?id=${r.id}">
+        <img src="${r.img}" alt="${r.title}" loading="lazy">
+        <h3 class="line-clamp-2">${r.title}</h3>
+        <div class="stars text-xs mb-2">${starString(r.rating)}</div>
+        <div class="p-price mb-4">${fmtINR(r.price)}</div>
+        <button class="neu-btn primary block" onclick="event.preventDefault();addToCart('${r.id}')">Add to Cart</button>
+      </a>`).join('');
+  }
+
+  function renderReviews(){
+    const userReviews = getReviews(p.id);
+    const staticReviews = [
+      {name:'Rahul K.', rating:5, text:'Exactly as described, fast shipping. Would buy again.', ts: Date.now()-1000*60*60*24*5},
+      {name:'Sneha P.', rating:4, text:'Great value for money, packaging could be better.', ts: Date.now()-1000*60*60*24*12},
+    ];
+    const all = [...userReviews, ...staticReviews];
+    return all.map(r=>`
+      <div class="neu-sm" style="padding:1rem">
+        <div class="flex justify-between"><span class="font-bold text-sm">${r.name}</span><span class="stars text-xs">${starString(r.rating)}</span></div>
+        <p class="text-muted text-sm mt-2">${r.text}</p>
+        <div class="text-xs text-muted mt-2">${typeof r.ts==='number' ? timeAgo(r.ts) : ''}</div>
+      </div>`).join('');
+  }
+
+  if(!p){
+    document.getElementById('pdpContent').innerHTML = '<div class="empty-state">Product not found. <a href="store.html" class="text-indigo font-bold">Back to store →</a></div>';
+  } else {
+    document.title = p.title + ' | TechForge India';
+    document.getElementById('pageTitle').textContent = p.title + ' | Buy Online at TechForge India';
+    document.getElementById('metaDesc').setAttribute('content', p.title + ' — ' + p.desc.slice(0,140));
+    document.getElementById('canonicalLink').setAttribute('href', 'https://www.techforge.example.in/product.html?id='+p.id);
+    document.getElementById('crumb').innerHTML = `<a href="index.html">Home</a> / <a href="store.html?cat=${p.category}">${p.category}</a> / <span>${p.title}</span>`;
+    document.getElementById('productJsonLd').textContent = JSON.stringify({
+      "@context":"https://schema.org","@type":"Product","name":p.title,"image":p.img,"description":p.desc,"brand":{"@type":"Brand","name":p.brand},
+      "offers":{"@type":"Offer","priceCurrency":"INR","price":p.price,"availability":p.stock>0?"https://schema.org/InStock":"https://schema.org/OutOfStock","url":location.href},
+      "aggregateRating":{"@type":"AggregateRating","ratingValue":p.rating,"reviewCount":p.reviews}
+    });
+
+    const off = p.mrp ? Math.round(100-(p.price/p.mrp*100)) : 0;
+    document.getElementById('pdpContent').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:2.5rem">
+      <div style="display:flex;flex-direction:column;gap:2.5rem" class="pdp-flex">
+        <div class="neu-card" style="padding:2rem;display:flex;align-items:center;justify-content:center;flex:1">
+          <img src="${p.img}" alt="${p.title}" style="max-height:24rem;object-fit:contain">
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:1rem">
+          <span class="badge badge-indigo" style="width:max-content">${p.category}</span>
+          <h1 class="font-black" style="font-size:1.9rem">${p.title}</h1>
+          <div class="stars">${starString(p.rating)} <span class="text-muted text-sm">(${p.reviews} reviews)</span></div>
+          <div><span class="p-price" style="font-size:1.9rem">${fmtINR(p.price)}</span> ${p.mrp?`<span class="p-mrp">${fmtINR(p.mrp)}</span> <span class="p-off">${off}% off</span>`:''}</div>
+          <p class="text-muted">${p.desc}</p>
+          <div class="font-bold ${p.stock>0?'text-success':'text-danger'}">${p.stock>0 ? p.stock+' in stock — ships in 2-4 days' : 'Out of stock'}</div>
+          <div class="flex gap-4">
+            <button class="neu-btn primary block" style="flex:1;padding:1rem" onclick="addToCart('${p.id}')" ${p.stock<1?'disabled':''}>Add to Cart</button>
+            <button class="neu-btn block" style="flex:1;padding:1rem" onclick="addToCart('${p.id}');toggleCartDrawer(true)" ${p.stock<1?'disabled':''}>Buy Now</button>
+            <button class="neu-btn" style="padding:1rem" onclick="toggleWishlist('${p.id}');this.textContent=isWishlisted('${p.id}')?'❤️':'🤍'">${isWishlisted(p.id)?'❤️':'🤍'}</button>
+          </div>
+          <div class="trust-grid mt-4">
+            <div class="text-xs font-bold text-muted flex items-center gap-2">📦 Secure Packaging</div>
+            <div class="text-xs font-bold text-muted flex items-center gap-2">🛡️ Brand Warranty</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="neu-card" style="padding:2rem">
+        <h2 class="font-black mb-4" style="font-size:1.25rem">Specifications</h2>
+        <ul style="columns:2;gap:2rem;line-height:2">${p.specs.map(s=>`<li class="text-muted text-sm">✓ ${s}</li>`).join('')}</ul>
+      </div>
+
+      <div class="neu-card" style="padding:2rem">
+        <div class="section-title"><h2>Customer Reviews</h2></div>
+        <form onsubmit="event.preventDefault();submitReview(this)" class="neu-sm mb-6" style="padding:1.25rem;display:flex;flex-direction:column;gap:.75rem">
+          <div class="flex gap-4">
+            <input name="name" placeholder="Your name" required class="neu-in">
+            <select name="rating" class="neu-in" style="max-width:8rem"><option value="5">★★★★★</option><option value="4">★★★★☆</option><option value="3">★★★☆☆</option><option value="2">★★☆☆☆</option><option value="1">★☆☆☆☆</option></select>
+          </div>
+          <textarea name="text" placeholder="Share your experience with this product..." required class="neu-in" rows="3"></textarea>
+          <button class="neu-btn primary" style="width:max-content">Submit Review</button>
+        </form>
+        <div id="reviewsList" style="display:flex;flex-direction:column;gap:1rem"></div>
+      </div>
+
+      <div>
+        <div class="section-title"><h2>You may also like</h2></div>
+        <div class="product-grid four" id="relatedGrid"></div>
+      </div>
+    </div>`;
+    document.getElementById('reviewsList').innerHTML = renderReviews();
+    document.getElementById('relatedGrid').innerHTML = renderRelated();
+    logEvent('view_item', { item_id: p.id, item_name: p.title, value: p.price });
+
+    var styleTag = document.createElement('style');
+    styleTag.textContent = '@media(min-width:1024px){.pdp-flex{flex-direction:row !important}}';
+    document.head.appendChild(styleTag);
+  }
+
+  function submitReview(form){
+    addReview(p.id, { name: form.name.value, rating: Number(form.rating.value), text: form.text.value, ts: Date.now() });
+    document.getElementById('reviewsList').innerHTML = renderReviews();
+    form.reset();
+    showToast('Thanks for your review!');
+  }
+</script>
+</body>
+</html>

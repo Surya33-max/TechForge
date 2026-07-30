@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secure Checkout | TechForge India</title>
+<meta name="robots" content="noindex,follow">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header glass">
+  <div class="container nav-row">
+    <a href="index.html" class="flex items-center gap-2"><span class="neu-sm" style="padding:.5rem;display:inline-flex">🖥️</span><span class="logo">TECH<span>FORGE</span></span></a>
+    <div class="text-sm font-bold text-muted">🔒 Secure Checkout</div>
+  </div>
+</header>
+
+<main class="container py-8" id="checkoutRoot">
+  <h1 class="font-black mb-8" style="font-size:1.9rem">Checkout</h1>
+</main>
+
+<footer class="site-footer">
+  <div class="container text-center text-muted">&copy; 2026 TechForge India. All rights reserved.</div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  const cart = getCart();
+  const root = document.getElementById('checkoutRoot');
+
+  if(cart.length===0){
+    root.innerHTML += `<div class="neu-card empty-state">Your cart is empty. <a href="store.html" class="text-indigo font-bold">Go shopping →</a></div>`;
+  } else {
+    const coupon = lsGet('tf_active_coupon', null);
+    const subtotal = cartSubtotal(cart);
+    const discount = coupon ? coupon.discount : 0;
+    const total = subtotal - discount;
+
+    root.innerHTML += `
+    <div style="display:flex;flex-direction:column;gap:2rem" class="chk-flex">
+      <div style="flex:1.4" class="neu-card" style="padding:2rem">
+        <h2 class="font-black mb-6" style="font-size:1.2rem;border-bottom:1px solid rgba(148,163,184,.3);padding-bottom:.5rem">Shipping Information</h2>
+        <form id="chkForm" onsubmit="placeOrder(event)" style="display:flex;flex-direction:column;gap:1.1rem">
+          <div style="display:flex;gap:1rem">
+            <input name="firstName" placeholder="First Name" required class="neu-in">
+            <input name="lastName" placeholder="Last Name" required class="neu-in">
+          </div>
+          <input name="email" type="email" placeholder="Email Address" required class="neu-in">
+          <input name="phone" type="tel" pattern="[0-9]{10}" placeholder="10-digit Mobile Number" required class="neu-in">
+          <textarea name="address" placeholder="Full Delivery Address" required rows="3" class="neu-in"></textarea>
+          <div style="display:flex;gap:1rem">
+            <input name="city" placeholder="City" required class="neu-in">
+            <input name="pincode" placeholder="PIN Code" required class="neu-in">
+          </div>
+
+          <h2 class="font-black mt-4 mb-2" style="font-size:1.2rem;border-bottom:1px solid rgba(148,163,184,.3);padding-bottom:.5rem">Payment Method</h2>
+          <div class="cat-grid" style="grid-template-columns:repeat(3,1fr)">
+            <label class="neu-btn" style="flex-direction:column;padding:1rem"><input type="radio" name="method" value="card" checked style="margin-bottom:.4rem">💳 Card</label>
+            <label class="neu-btn" style="flex-direction:column;padding:1rem"><input type="radio" name="method" value="upi" style="margin-bottom:.4rem">📱 UPI</label>
+            <label class="neu-btn" style="flex-direction:column;padding:1rem"><input type="radio" name="method" value="cod" style="margin-bottom:.4rem">💵 COD</label>
+          </div>
+        </form>
+      </div>
+      <div style="flex:1">
+        <div class="neu-card" style="padding:2rem">
+          <h2 class="font-black mb-4" style="font-size:1.2rem;border-bottom:1px solid rgba(148,163,184,.3);padding-bottom:.5rem">Order Summary</h2>
+          <div style="display:flex;flex-direction:column;gap:.75rem;max-height:16rem;overflow-y:auto;margin-bottom:1rem">
+            ${cart.map(c=>`
+              <div class="flex items-center gap-3">
+                <img src="${c.img}" style="width:44px;height:44px;object-fit:contain;border-radius:8px">
+                <div style="flex:1;min-width:0"><div class="text-sm font-bold line-clamp-2">${c.title}</div><div class="text-xs text-muted">Qty: ${c.qty}</div></div>
+                <div class="text-sm font-black">${fmtINR(c.price*c.qty)}</div>
+              </div>`).join('')}
+          </div>
+          <div class="summary-row"><span>Subtotal</span><span>${fmtINR(subtotal)}</span></div>
+          <div class="summary-row"><span>Discount ${coupon?'('+coupon.code+')':''}</span><span class="text-success">−${fmtINR(discount)}</span></div>
+          <div class="summary-row"><span>Shipping</span><span class="text-success">Free</span></div>
+          <div class="summary-total"><span>Total</span><span>${fmtINR(total)}</span></div>
+          <button form="chkForm" type="submit" class="neu-btn primary block mt-6" style="padding:1rem;font-size:1.05rem">Place Order</button>
+          <p class="text-xs text-muted text-center mt-4">🔒 This is a demo checkout for learning purposes — no real payment is processed.</p>
+        </div>
+      </div>
+    </div>`;
+
+    var styleTag = document.createElement('style');
+    styleTag.textContent = '@media(min-width:900px){.chk-flex{flex-direction:row !important}}';
+    document.head.appendChild(styleTag);
+  }
+
+  function placeOrder(e){
+    e.preventDefault();
+    const form = e.target;
+    const method = form.method.value;
+    const coupon = lsGet('tf_active_coupon', null);
+    const subtotal = cartSubtotal(cart);
+    const discount = coupon ? coupon.discount : 0;
+    const total = subtotal - discount;
+
+    // deduct stock
+    const products = getProducts();
+    cart.forEach(c=>{
+      const p = products.find(x=>x.id===c.id);
+      if(p) p.stock = Math.max(0, p.stock - c.qty);
+    });
+    saveProducts(products);
+
+    const order = {
+      id: 'TF' + Date.now().toString().slice(-8),
+      ts: Date.now(),
+      items: cart,
+      subtotal, discount, total, method,
+      customer: { name: form.firstName.value+' '+form.lastName.value, email: form.email.value, phone: form.phone.value, address: form.address.value, city: form.city.value, pincode: form.pincode.value },
+      status: method==='cod' ? 'Placed (Pay on Delivery)' : 'Paid'
+    };
+    placeOrderRecord(order);
+    logEvent('purchase', { transaction_id: order.id, value: total, items: cart.length, payment_type: method });
+
+    clearCart();
+    localStorage.removeItem('tf_active_coupon');
+    location.href = 'order-success.html?order=' + order.id;
+  }
+</script>
+</body>
+</html>
