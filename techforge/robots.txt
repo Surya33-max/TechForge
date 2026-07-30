@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /admin.html
-Disallow: /cart.html
-Disallow: /checkout.html
-Disallow: /order-success.html
-
-Sitemap: https://tech-forge-blue.vercel.app/sitemap.xml
