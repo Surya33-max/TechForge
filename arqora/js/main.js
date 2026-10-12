@@ -35,17 +35,19 @@
   const overlay = document.getElementById('searchOverlay');
   const overlaySearch = document.getElementById('overlaySearch');
   const results = document.getElementById('searchResults');
+  const searchToggle = document.getElementById('searchToggle');
   function openSearch() {
     if (!overlay) return;
     overlay.hidden = false;
     document.body.style.overflow = 'hidden';
-    setTimeout(() => overlaySearch?.focus(), 30);
     renderSearch('');
+    overlaySearch?.focus();
   }
   function closeSearch() {
-    if (!overlay) return;
+    if (!overlay || overlay.hidden) return;
     overlay.hidden = true;
     document.body.style.overflow = '';
+    searchToggle?.focus();
   }
   function renderSearch(value) {
     if (!results) return;
@@ -65,11 +67,22 @@
       document.getElementById('products')?.scrollIntoView({behavior:'smooth'});
     }));
   }
-  document.getElementById('searchToggle')?.addEventListener('click', openSearch);
+  searchToggle?.addEventListener('click', openSearch);
   document.getElementById('closeSearch')?.addEventListener('click', closeSearch);
   overlay?.addEventListener('click', event => { if (event.target === overlay) closeSearch(); });
   overlaySearch?.addEventListener('input', event => renderSearch(event.target.value));
-  document.addEventListener('keydown', event => { if (event.key === 'Escape') closeSearch(); });
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    closeSearch();
+    const nav = document.querySelector('.desktop-nav');
+    const menuToggle = document.getElementById('menuToggle');
+    if (nav?.dataset.mobileOpen === 'true') {
+      nav.dataset.mobileOpen = 'false';
+      nav.removeAttribute('style');
+      menuToggle?.setAttribute('aria-expanded', 'false');
+      menuToggle?.focus();
+    }
+  });
   document.getElementById('menuToggle')?.addEventListener('click', () => {
     const nav = document.querySelector('.desktop-nav');
     if (!nav) return;
