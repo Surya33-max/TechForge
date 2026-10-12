@@ -15,7 +15,8 @@ Then visit `http://localhost:8000`.
 - Working category filters and live product search
 - Search overlay and mobile navigation
 - Studio capabilities and contact form that prepares an email
-- Reduced-motion support, semantic sections, meta description and Open Graph basics
+- Keyboard skip link, visible focus states, accessible search dialog focus handling, and reduced-motion support
+- Semantic sections, meta description and Open Graph basics
 - Pure HTML/CSS/JS, no build tools or framework
 
 ## Before launch
