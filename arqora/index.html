@@ -13,13 +13,14 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body id="top">
+<a class="skip-link" href="#main-content">Skip to content</a>
 <div class="announcement"><span class="announcement-dot"></span> Introducing Arqora Studio <span class="announcement-sep">/</span> Digital tools for creative work <a href="#products">Explore products <span aria-hidden="true">↗</span></a></div>
 <header class="site-header">
   <a class="brand" href="#" aria-label="Arqora home"><span class="brand-mark">a<span>.</span></span><span class="brand-name">arqora<span>®</span></span></a>
-  <nav class="desktop-nav" aria-label="Main navigation"><a href="#products">Products</a><a href="#services">What we do</a><a href="#studio">Studio</a></nav>
-  <div class="header-actions"><button class="icon-btn search-toggle" aria-label="Search products" id="searchToggle">⌕</button><a class="button button-dark header-cta" href="#contact">Let's talk <span>↗</span></a><button class="menu-toggle icon-btn" id="menuToggle" aria-label="Open menu">☰</button></div>
+  <nav class="desktop-nav" id="primaryNav" aria-label="Main navigation"><a href="#products">Products</a><a href="#services">What we do</a><a href="#studio">Studio</a></nav>
+  <div class="header-actions"><button class="icon-btn search-toggle" aria-label="Search products" id="searchToggle">⌕</button><a class="button button-dark header-cta" href="#contact">Let's talk <span>↗</span></a><button class="menu-toggle icon-btn" id="menuToggle" aria-label="Toggle navigation" aria-controls="primaryNav" aria-expanded="false">☰</button></div>
 </header>
-<main>
+<main id="main-content" tabindex="-1">
 <section class="hero wrap">
   <div class="hero-copy">
     <div class="eyebrow"><span class="eyebrow-line"></span> INDEPENDENT DIGITAL STUDIO</div>
@@ -57,6 +58,6 @@
 <section class="contact-section" id="contact"><div class="wrap contact-inner"><div><div class="eyebrow"><span class="eyebrow-line"></span> HAVE SOMETHING IN MIND?</div><h2>Let's make<br><span>it happen.</span></h2><p>Have a project, product idea or workflow problem? Tell us what you're trying to make.</p></div><form class="contact-form" id="contactForm"><label for="contactName">Your name</label><input id="contactName" name="name" required placeholder="Name"><label for="contactEmail">Email address</label><input id="contactEmail" name="email" type="email" required placeholder="you@example.com"><label for="contactType">I'm interested in</label><select id="contactType" name="interest"><option>Web design & development</option><option>Figma / UI design</option><option>DaVinci Resolve effects</option><option>Digital products</option><option>Something else</option></select><label for="contactMessage">A little about it</label><textarea id="contactMessage" name="message" rows="3" placeholder="What are you working on?"></textarea><button class="button button-dark form-submit" type="submit">Prepare email <span>↗</span></button><p class="form-note" id="formNote">This opens your email app with your message. No backend required.</p></form></div></section>
 </main>
 <footer class="site-footer"><div class="wrap footer-top"><a class="brand" href="#"><span class="brand-mark">a<span>.</span></span><span class="brand-name">arqora<span>®</span></span></a><p>Thoughtful tools for people who make things.</p><a href="#top" class="back-top">BACK TO TOP ↑</a></div><div class="wrap footer-bottom"><span>© <span id="year"></span> Arqora Studio. Made with intent.</span><div><a href="#products">Products</a><a href="#services">Services</a><a href="#contact">Contact</a></div><span class="footer-location">INDEPENDENT STUDIO · INDIA</span></div></footer>
-<div class="search-overlay" id="searchOverlay" hidden><div class="search-panel"><button id="closeSearch" class="icon-btn close-search" aria-label="Close search">×</button><label for="overlaySearch">Find something good</label><input id="overlaySearch" type="search" placeholder="Try “Fusion”, “Figma” or “web”"><p>Search the collection to find your next tool.</p><div id="searchResults"></div></div></div>
+<div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-labelledby="overlaySearchTitle" hidden><div class="search-panel"><button id="closeSearch" class="icon-btn close-search" aria-label="Close search">×</button><label id="overlaySearchTitle" for="overlaySearch">Find something good</label><input id="overlaySearch" type="search" placeholder="Try “Fusion”, “Figma” or “web”"><p>Search the collection to find your next tool.</p><div id="searchResults"></div></div></div>
 <script src="js/main.js"></script>
 </body></html>
