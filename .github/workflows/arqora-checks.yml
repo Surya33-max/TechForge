@@ -71,9 +71,17 @@ jobs:
           for fragment in audit.fragments:
               if fragment and fragment not in known:
                   audit.errors.append(f"Broken in-page link: #{fragment}")
-          for required in ("products", "services", "studio", "contact", "productGrid", "contactForm"):
+          for required in ("products", "services", "studio", "contact", "productGrid", "contactForm", "main-content", "searchOverlay", "overlaySearch", "searchResults", "primaryNav"):
               if required not in known:
                   audit.errors.append(f"Missing required id: {required}")
+          if 'class="skip-link" href="#main-content"' not in source:
+              audit.errors.append("Missing keyboard skip link")
+          if 'role="dialog" aria-modal="true"' not in source:
+              audit.errors.append("Search overlay must expose dialog semantics")
+          if 'aria-live="polite"' not in source:
+              audit.errors.append("Search results must announce updates")
+          if '<html lang="en">' not in source:
+              audit.errors.append("Document language is missing")
           if audit.errors:
               print("\n".join("ERROR: " + error for error in audit.errors))
               sys.exit(1)
