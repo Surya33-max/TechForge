@@ -82,6 +82,14 @@
     }
     document.getElementById('menuToggle').setAttribute('aria-expanded', String(!open));
   });
+  document.querySelectorAll('.desktop-nav a').forEach(link => link.addEventListener('click', () => {
+    const nav = document.querySelector('.desktop-nav');
+    if (nav?.dataset.mobileOpen === 'true') {
+      nav.dataset.mobileOpen = 'false';
+      nav.removeAttribute('style');
+      document.getElementById('menuToggle')?.setAttribute('aria-expanded', 'false');
+    }
+  }));
   document.getElementById('contactForm')?.addEventListener('submit', event => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
