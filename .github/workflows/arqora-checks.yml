@@ -80,7 +80,7 @@ jobs:
               audit.errors.append("Search overlay must expose dialog semantics")
           if 'aria-live="polite"' not in source:
               audit.errors.append("Search results must announce updates")
-          if '<html lang="en">' not in source:
+          if not any(tag in source for tag in ('<html lang="en">', '<html lang="en-IN">')):
               audit.errors.append("Document language is missing")
           if audit.errors:
               print("\n".join("ERROR: " + error for error in audit.errors))
