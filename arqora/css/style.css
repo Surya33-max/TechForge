@@ -5,3 +5,10 @@
 :focus-visible{outline:3px solid var(--accent);outline-offset:4px}
 .search-overlay:focus{outline:none}
 @media(prefers-reduced-motion:reduce){.skip-link{transition:none}}
+
+/* Arqora product artwork masters */
+.product-visual{isolation:isolate}
+.product-artwork{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:0}
+.product-visual>.visual-tag,.product-visual>.visual-foot{z-index:2}
+.visual-whip .product-artwork,.visual-impact .product-artwork{filter:saturate(.96)}
+@media (prefers-reduced-motion:reduce){.product-artwork{scroll-behavior:auto}}
