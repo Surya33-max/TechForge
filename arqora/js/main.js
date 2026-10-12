@@ -72,11 +72,25 @@
   overlay?.addEventListener('click', event => { if (event.target === overlay) closeSearch(); });
   overlaySearch?.addEventListener('input', event => renderSearch(event.target.value));
   document.addEventListener('keydown', event => {
+    if (event.key === 'Tab' && overlay && !overlay.hidden) {
+      const focusable = [...overlay.querySelectorAll('button:not([disabled]), input:not([disabled]), a[href], [tabindex]:not([tabindex="-1"])')];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+      return;
+    }
     if (event.key !== 'Escape') return;
+    const searchWasOpen = Boolean(overlay && !overlay.hidden);
     closeSearch();
     const nav = document.querySelector('.desktop-nav');
     const menuToggle = document.getElementById('menuToggle');
-    if (nav?.dataset.mobileOpen === 'true') {
+    if (!searchWasOpen && nav?.dataset.mobileOpen === 'true') {
       nav.dataset.mobileOpen = 'false';
       nav.removeAttribute('style');
       menuToggle?.setAttribute('aria-expanded', 'false');
