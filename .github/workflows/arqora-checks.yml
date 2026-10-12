@@ -1,0 +1,89 @@
+name: Arqora website checks
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "arqora/**"
+      - ".github/workflows/arqora-checks.yml"
+  push:
+    branches: [arqora-product-website]
+    paths:
+      - "arqora/**"
+      - ".github/workflows/arqora-checks.yml"
+
+jobs:
+  static-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript syntax
+        run: node --check arqora/js/main.js
+      - name: Check page structure and local references
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          import sys
+
+          root = Path("arqora")
+          page = root / "index.html"
+          source = page.read_text(encoding="utf-8")
+
+          class Audit(HTMLParser):
+              def __init__(self):
+                  super().__init__(convert_charrefs=True)
+                  self.ids = []
+                  self.fragments = []
+                  self.assets = []
+                  self.errors = []
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  ident = attrs.get("id")
+                  if ident:
+                      if ident in self.ids:
+                          self.errors.append(f"Duplicate id: {ident}")
+                      self.ids.append(ident)
+                  for key in ("href", "src"):
+                      value = attrs.get(key, "")
+                      if not value:
+                          continue
+                      if value.startswith("#"):
+                          self.fragments.append(value[1:])
+                      elif value.startswith(("https://", "http://", "mailto:", "tel:", "data:")):
+                          continue
+                      elif tag in ("script", "link") and key in ("src", "href"):
+                          if value.endswith((".css", ".js")):
+                              self.assets.append(value)
+
+          audit = Audit()
+          audit.feed(source)
+          for asset in audit.assets:
+              path = root / asset
+              if not path.is_file():
+                  audit.errors.append(f"Missing local asset: {asset}")
+          known = set(audit.ids)
+          for fragment in audit.fragments:
+              if fragment and fragment not in known:
+                  audit.errors.append(f"Broken in-page link: #{fragment}")
+          for required in ("products", "services", "studio", "contact", "productGrid", "contactForm", "main-content", "searchOverlay", "overlaySearch", "searchResults", "primaryNav"):
+              if required not in known:
+                  audit.errors.append(f"Missing required id: {required}")
+          if 'class="skip-link" href="#main-content"' not in source:
+              audit.errors.append("Missing keyboard skip link")
+          if 'role="dialog" aria-modal="true"' not in source:
+              audit.errors.append("Search overlay must expose dialog semantics")
+          if 'aria-live="polite"' not in source:
+              audit.errors.append("Search results must announce updates")
+          if not any(tag in source for tag in ('<html lang="en">', '<html lang="en-IN">')):
+              audit.errors.append("Document language is missing")
+          if audit.errors:
+              print("\n".join("ERROR: " + error for error in audit.errors))
+              sys.exit(1)
+          print(f"HTML smoke check passed: {len(audit.ids)} unique IDs, {len(audit.assets)} local assets, {len(audit.fragments)} fragment links.")
+          PY

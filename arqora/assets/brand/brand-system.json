@@ -1,0 +1,79 @@
+{
+  "brand": "Arqora",
+  "descriptor": "Independent Digital Studio",
+  "tagline": "Digital products, designed to move.",
+  "version": "1.0.0",
+  "colors": {
+    "canvas": "#E8E9EE",
+    "surface": "#E8E9EE",
+    "surfaceRaised": "#ECECF1",
+    "surfaceSunken": "#E1E2E9",
+    "shadowDark": "#C3C5CF",
+    "shadowLight": "#FFFFFF",
+    "ink": "#202334",
+    "inkSoft": "#35394D",
+    "muted": "#6E7284",
+    "mutedSoft": "#9296A7",
+    "accent": "#6C5CE7",
+    "accentSoft": "#9B91FF",
+    "accentMint": "#9CE6D1",
+    "deep": "#191B29"
+  },
+  "typography": {
+    "display": {
+      "family": "Manrope",
+      "weights": [
+        700,
+        800
+      ]
+    },
+    "body": {
+      "family": "DM Sans",
+      "weights": [
+        400,
+        500,
+        600,
+        700
+      ]
+    },
+    "code": {
+      "family": "JetBrains Mono",
+      "weights": [
+        400,
+        500
+      ]
+    }
+  },
+  "layout": {
+    "maxWidth": 1160,
+    "spacing": [
+      4,
+      8,
+      12,
+      16,
+      24,
+      32,
+      48,
+      64,
+      96
+    ],
+    "radius": {
+      "control": 12,
+      "media": 16,
+      "card": 24
+    }
+  },
+  "metadata": {
+    "title": "Arqora Studio — Digital products, designed to move",
+    "description": "UI systems, web experiences and motion tools built for creative workflows.",
+    "locale": "en_IN",
+    "socialImage": "assets/brand/arqora-social-card.svg"
+  },
+  "principles": [
+    "quietly expressive",
+    "useful over decorative",
+    "clear product status",
+    "accessible by default",
+    "reduced-motion aware"
+  ]
+}

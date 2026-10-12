@@ -1,0 +1,10 @@
+/* Arqora Studio — canonical brand tokens, v1.0 */
+:root {
+ color-scheme: light;
+ --bg:#E8E9EE; --surface:#E8E9EE; --surface-raised:#ECECF1; --surface-sunken:#E1E2E9;
+ --shadow-dark:#C3C5CF; --shadow-light:#FFFFFF; --ink:#202334; --ink-soft:#35394D;
+ --muted:#6E7284; --muted-soft:#9296A7; --accent:#6C5CE7; --accent-2:#9B91FF;
+ --accent-mint:#9CE6D1; --line:rgba(111,116,139,.22); --dark:#191B29; --radius:24px;
+}
+::selection{background:#D9D4FF;color:#202334}
+:focus-visible{outline:3px solid #6C5CE7;outline-offset:4px}
